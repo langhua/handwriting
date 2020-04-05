@@ -124,7 +124,7 @@
     "npm-run-all": "^4.1.2",
     "null-loader": "0.1.1",
     "nyc": "^11.3.0",
-    "open": "0.0.5",
+    "open": "6.0.0",
     "postcss-loader": "^2.1.5",
     "raw-loader": "0.5.1",
     "react-test-renderer": "^15.5.4",
