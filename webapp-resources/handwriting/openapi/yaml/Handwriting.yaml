@@ -1,0 +1,307 @@
+openapi: 3.0.0
+info:
+  description: 基础手写接口
+  version: 1.0.0
+  title: 登录接口
+servers:
+  - description: 本地测试环境请求地址
+    url: http://localhost:8080/handwriting
+tags:
+  - name: Common
+    description: 通用Web接口
+  - name: MyScript
+    description: 用于支持MyScript V4接口
+paths:
+  /BasicCheck:
+    post:
+      tags:
+        - Common
+      summary: 通用检查汉字笔画数、笔顺、笔画方向、优美度
+      description: 通用检查汉字笔画数、笔顺、笔画方向、优美度
+      operationId: BasicCheck
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BasicCheckRequest'
+      responses:
+        200:
+          description: 接口处理了请求
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/SuccessEvalGood'
+                  - $ref: '#/components/schemas/SuccessEvalBad'
+                  - $ref: '#/components/schemas/ErrorStrokeNumber'
+                  - $ref: '#/components/schemas/ErrorStrokeDirection'
+                  - $ref: '#/components/schemas/ErrorStrokeSequence'
+              example: {"result":"success","score":184,"han":"中","message":"书写正确","timeConsumed":"3ms"}
+                
+        405:
+          description: '方法不被允许 (Method not allowed)'
+
+  /MyScriptBasicCheck:
+    post:
+      tags:
+        - MyScript
+      summary: 支持MyScript V4的检查汉字笔画数、笔顺、笔画方向、优美度
+      description: 支持MyScript V4的检查汉字笔画数、笔顺、笔画方向、优美度
+      operationId: MyScriptBasicCheck
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MyScriptBasicCheckRequest'
+      responses:
+        200:
+          description: 接口处理了请求
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/SuccessEvalGood'
+                  - $ref: '#/components/schemas/SuccessEvalBad'
+                  - $ref: '#/components/schemas/ErrorStrokeNumber'
+                  - $ref: '#/components/schemas/ErrorStrokeDirection'
+                  - $ref: '#/components/schemas/ErrorStrokeSequence'
+              example: {"result":"success","score":184,"han":"中","message":"书写正确","timeConsumed":"3ms"}
+                
+        405:
+          description: '方法不被允许 (Method not allowed)'
+
+components:
+  schemas:
+    BasicCheckRequest:
+      description: 发送汉字检查请求数据
+      type: object
+      properties:
+        han:
+          description: 要检查的一个汉字字符
+          type: string
+          example: "人"
+        xpts:
+          description: 笔画的x坐标数据
+          type: string
+          example: "[1,2,3,4,5,6,7,8,9,10]"
+        ypts:
+          description: 笔画的y坐标数据
+          type: string
+          example: "[1,2,3,4,5,6,7,8,9,10]"
+        cpts:
+          description: 笔画的抬笔（POINTER_UP）和落笔（POINTER_DOWN），抬笔是1，落笔是0
+          type: string
+          example: "[0,0,0,0,1,0,0,0,0,1]"
+        count:
+          description: 传入的笔迹坐标数
+          type: number
+          format: int
+          example: 10
+      required:
+        - han
+        - xpts
+        - ypts
+        - cpts
+        - count
+
+    SuccessEvalGood:
+      description: 书写正确
+      type: object
+      properties:
+        result:
+          description: 结果
+          type: string
+          enum:
+            - success: 成功
+        score:
+          description: 评分，数值大于170
+          type: number
+          format: int
+          example: 184
+        message:
+          description: 结果信息
+          type: string
+          example: "书写正确"
+        han:
+          description: 中文字符
+          type: string
+          example: "中"
+        timeConsumed:
+          description: 用时
+          type: string
+          example: "100ms"
+      required:
+        - result
+        - score
+        - han
+        - message
+      example: {"result":"success","score":184,"han":"中","message":"书写正确","timeConsumed":"3ms"}
+
+    SuccessEvalBad:
+      description: 书写不够正确和美观
+      type: object
+      properties:
+        result:
+          description: 结果
+          type: string
+          enum:
+            - success: 成功
+        score:
+          description: 评分，数值小于等于170
+          type: number
+          format: int
+          example: 170
+        message:
+          description: 结果信息
+          type: string
+          example: "书写不够正确和美观"
+        han:
+          description: 中文字符
+          type: string
+          example: "中"
+        timeConsumed:
+          description: 用时
+          type: string
+          example: "100ms"
+      required:
+        - result
+        - score
+        - han
+        - message
+      example: {"result":"success","score":170,"han":"人","message":"书写不够正确和美观","timeConsumed":"6ms"}
+
+    ErrorStrokeNumber:
+      description: 笔画数错误
+      type: object
+      properties:
+        result:
+          description: 结果
+          type: string
+          enum:
+            - error: 错误
+        score:
+          description: 评分
+          type: number
+          format: int
+          example: 0
+        message:
+          description: 结果信息
+          type: string
+          example: "书写正确"
+        han:
+          description: 中文字符
+          type: string
+          example: "中"
+        timeConsumed:
+          description: 接口用时
+          type: string
+          example: "100ms"
+        yourStrokeNum:
+          description: 你的笔画数
+          type: number
+          format: int
+          example: 2
+        stdStrokeNum:
+          description: 标准笔画数
+          type: number
+          format: int
+          example: 1
+      required:
+        - result
+        - han
+        - message
+        - yourStrokeNum
+        - stdStrokeNum
+      example: {"result":"error","message":"笔画数不一致，标准笔画数是1, 你的笔画数是2","score":0,"stdStrokeNum":1,"yourStrokeNum":2,"han":"一","timeConsumed":"8ms"}
+
+    ErrorStrokeDirection:
+      description: 笔画方向反了
+      type: object
+      properties:
+        result:
+          description: 结果
+          type: string
+          enum:
+            - error: 错误
+        score:
+          description: 评分
+          type: number
+          format: int
+          example: 159
+        message:
+          description: 结果信息
+          type: string
+          example: "你第1笔笔画方向反了"
+        han:
+          description: 中文字符
+          type: string
+          example: "中"
+        timeConsumed:
+          description: 接口用时
+          type: string
+          example: "100ms"
+        wrongStrokeDirectionAt:
+          description: 方向错误的笔画数
+          type: number
+          format: int
+          example: 1
+      required:
+        - result
+        - han
+        - message
+        - wrongStrokeDirectionAt
+      example: {"result":"error","message":"你第1笔笔画方向反了","score":159,"wrongStrokeDirectionAt":1,"han":"中","timeConsumed":"3ms"}
+
+    ErrorStrokeSequence:
+      description: 笔顺错误
+      type: object
+      properties:
+        result:
+          description: 结果
+          type: string
+          enum:
+            - error: 错误
+        score:
+          description: 评分
+          type: number
+          format: int
+          example: 182
+        message:
+          description: 结果信息
+          type: string
+          example: "你第2笔笔顺错了"
+        han:
+          description: 中文字符
+          type: string
+          example: "中"
+        timeConsumed:
+          description: 接口用时
+          type: string
+          example: "100ms"
+        wrongStrokeAt:
+          description: 发生笔顺错误的笔画数
+          type: number
+          format: int
+          example: 2
+      required:
+        - result
+        - han
+        - message
+        - wrongStrokeAt
+      example: {"result":"error","message":"你第2笔笔顺错了","score":182,"wrongStrokeAt":2,"han":"中","timeConsumed":"22ms"}
+
+    MyScriptBasicCheckRequest:
+      description: 发送一个汉字字符和MyScript V4笔迹来请求检查
+      type: object
+      properties:
+        han:
+          description: 要检查的一个汉字字符
+          type: string
+          example: "人"
+        strokes:
+          description: MyScript V4笔迹
+          type: string
+          example: '[{"timestamp":"1970-01-01 00:00:06.014000","X":[256.9104,256.9104,256.64581,256.11667,255.58749,255.32291,255.05832,254.52916,254.26457,253.47083,253.20624,252.67708,252.1479,251.61874],"Y":[48.683331,50.006248,50.799999,52.122913,53.974998,54.768749,56.091663,56.885414,57.679165,59.002083,60.060413,61.118748,62.177082,63.235416],"F":[0.5,0.77639318,0.68318993,0.75311285,0.78914922,0.68318993,0.74618471,0.70071042,0.68318993,0.76302224,0.71852648,0.72921258,0.72921258,0.72921258],"T":[0,87,95,103,120,127,137,143,152,159,168,175,193,208],"type":"stroke","id":"0000000001001b00ff00"},{"timestamp":"1970-01-01 00:00:06.902000","X":[258.49789,260.08542,260.87915,261.67291,262.46664,263.78958,265.11249],"Y":[57.149998,58.737499,59.53125,60.060413,60.589581,61.647915,62.441666],"F":[0.5,0.70870495,0.72229666,0.70071042,0.70071042,0.77435064,0.76302224],"T":[0,63,88,103,191,216,240],"type":"stroke","id":"0000010001000d00ff00"}]'
+      required:
+        - han
+        - strokes

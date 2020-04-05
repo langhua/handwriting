@@ -1,0 +1,139 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+import org.apache.tools.ant.filters.ReplaceTokens
+
+/* ========================================================
+ * Project setup
+ * ======================================================== */
+plugins {
+	id 'application'
+	id 'java'
+	id 'groovy'
+	id 'eclipse'
+}
+
+// global properties
+ext.os = System.getProperty('os.name').toLowerCase()
+
+application {
+}
+
+distributions.main.contents.from(rootDir) {
+	include 'webapp-resources/**'
+}
+
+javadoc {
+	failOnError = true
+	options {
+		encoding 'UTF-8'
+		charSet 'UTF-8'
+		// Those external Javadoc links should correspond to the actual
+		// versions declared in the 'dependencies' block.
+		links(
+			'https://docs.oracle.com/javase/8/docs/api',
+			'http://docs.groovy-lang.org/docs/groovy-2.4.16/html/api'
+		)
+	}
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+// Groovy compile options, syntax gradlew -PXlint:none build
+tasks.withType(GroovyCompile) {
+	options.encoding = 'UTF-8'
+	if (!project.hasProperty('Xlint:none')) {
+	options.compilerArgs << "-Xlint:all"
+	// Exclude varargs warnings which are not silenced by @SafeVarargs.
+		options.compilerArgs << "-Xlint:-varargs"
+	}
+}
+
+// root and subproject settings
+defaultTasks 'jar', 'test'
+
+allprojects {
+	repositories{
+		jcenter()
+		mavenCentral()
+		mavenLocal()
+	}
+}
+
+configurations {
+	junitReport {
+		description = 'libraries needed to run junitreport for Handwriting unit tests'
+	}
+}
+
+dependencies {
+	implementation 'net.java.dev.jna:jna:4.0.0'
+	implementation 'com.google.code.gson:gson:2.8.2'
+	implementation 'net.java.dev.jna:jna-platform:4.0.0'
+	implementation 'javax.servlet:javax.servlet-api:4.0.1'
+	implementation 'javax.servlet.jsp:javax.servlet.jsp-api:2.3.3'
+	implementation 'org.codehaus.groovy:groovy-all:2.4.16' // Remember to change the version number in javadoc.options block
+
+	junitReport 'junit:junit:4.12'
+	junitReport 'org.apache.ant:ant-junit:1.10.6'
+
+	// Libraries downloaded manually
+	implementation fileTree(dir: file("${rootDir}/lib"), include: '**/*.jar')
+}
+
+def excludedJavaSources = [
+]
+
+// Files and directories present in config directories that should not be included in handwriting.jar.
+def excludedConfigFiles = [
+	'README*.md',
+	'*.txt',
+	'*.h',
+	'*.dll',
+	'*.txm'
+]
+
+sourceSets {
+	main {
+		groovy {
+			srcDirs = ['src/main/groovy']
+		}
+		resources {
+			srcDirs = ['src/main/resources']
+			exclude excludedConfigFiles
+			// Below are necessary for unit tests run by Gradle and integration tests
+			exclude { FileTreeElement elem -> !elem.getName().contains('recglib_x86.dll') &&
+											  !elem.getName().contains('hzi501.txm') &&
+											  !elem.getName().contains('xw_api.h')
+			}
+		}
+	}
+}
+
+jar.manifest.attributes(
+	'Implementation-Title': project.name,
+	'Class-Path': getJarClasspath()
+)
+
+tasks.eclipse.dependsOn(cleanEclipse)
+
+def getJarClasspath() {
+	def mapper = os.contains('windows') ? { '\\' + "$it" } : { "$it" }
+	configurations.runtimeClasspath.collect(mapper).join(' ')
+}
