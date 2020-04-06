@@ -1,6 +1,6 @@
 <%@ page pageEncoding="utf-8" %>
 <%
-    String swaggerUI = "v/3.19.5";
+    String swaggerUI = "v/swagger-ui-3.25.0";
 %>
 <html xmlns:lxslt="http://xml.apache.org/xslt">
 <head>

@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Implementation-Title: handwriting
+Class-Path: \C:\Users\huaru\.gradle\caches\modules-2\files-2.1\net.jav
+ a.dev.jna\jna-platform\4.0.0\deb6bf66918989b50209b8c9aaf3b2561af7f011
+ \jna-platform-4.0.0.jar \C:\Users\huaru\.gradle\caches\modules-2\file
+ s-2.1\net.java.dev.jna\jna\4.0.0\9b3a11c613ec3fd3440af4103b12c3de82d3
+ 8b6e\jna-4.0.0.jar \C:\Users\huaru\.gradle\caches\modules-2\files-2.1
+ \com.google.code.gson\gson\2.8.2\3edcfe49d2c6053a70a2a47e4e1c2f94998a
+ 49cf\gson-2.8.2.jar \C:\Users\huaru\.gradle\caches\modules-2\files-2.
+ 1\javax.servlet\javax.servlet-api\4.0.1\a27082684a2ff0bf397666c394349
+ 6c44541d1ca\javax.servlet-api-4.0.1.jar \C:\Users\huaru\.gradle\cache
+ s\modules-2\files-2.1\javax.servlet.jsp\javax.servlet.jsp-api\2.3.3\8
+ 1191ab80e342912dc9cea735c30ff4eddc64de3\javax.servlet.jsp-api-2.3.3.j
+ ar \C:\Users\huaru\.gradle\caches\modules-2\files-2.1\org.codehaus.gr
+ oovy\groovy-all\2.4.16\aa30a6479a3f6efc2ba8cd810cc2caf22a613b19\groov
+ y-all-2.4.16.jar
+
