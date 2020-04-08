@@ -19,7 +19,7 @@ import com.sun.jna.Library
 import com.sun.jna.Native
 
 /**
- * Java调用手写笔画顺序库的Web服务
+ * 加载DLL和txm文件
  */
 public class CLibUtils  {
     private static HandwritingCLib32 instance

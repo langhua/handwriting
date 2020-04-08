@@ -36,7 +36,7 @@ public interface HandwritingCLib32 extends Library {
      *        nPointCount是点的个数;
      *        (lpXis[i],lpYis[i])是第i个点的坐标,
      *        lpCis[i]是第i个点的标志;如果该点是笔画上的
-     *            最后一个点(落笔点),则lpCis[i]=1;否则为0;
+     *                  最后一个点(落笔点),则lpCis[i]=1;否则为0;
      *
      *   @return 返回值X在C++中的构造：
      *           ret = (int)((double)ri / 0x100000L * 200);
@@ -47,7 +47,7 @@ public interface HandwritingCLib32 extends Library {
      *           i = npBuf[2]; i = J_Confine(i, 0, 255);
      *           ret |= (i<<24);
      *
-                            *           返回值X的含义:
+     *           返回值X的含义:
      *                X的第一个字节：(X & 0xFF)，匹配程度,[0,100]; X<10的时候,是其它错误；X==1,笔画输不一样;
      *                X的第二个字节: ((X>>8)&0xFF): 返回错误类型(有多种错误时，只返回类型号最小的错误);
      *                    0: 书写正确;
@@ -61,7 +61,7 @@ public interface HandwritingCLib32 extends Library {
      *                        此时npRetBuf16[1]是第一个方向写反了的手写模板笔画序号;
      *                        如果有多个笔画方向写反了,只返回一个;
      *                X的第三个字节: ((X>>16)&0xFF):第一个笔画序号；
-     *              X的第四个字节: ((X>>24)&0xFF):第二个笔画序号；
+     *                X的第四个字节: ((X>>24)&0xFF):第二个笔画序号。
      */
     public int XW_RecgB(int ch_unicode,
                  int nPointCount,
