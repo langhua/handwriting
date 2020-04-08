@@ -23,48 +23,48 @@ import com.sun.jna.Native
  */
 public class CLibUtils  {
     private static HandwritingCLib32 instance
-	
-	private static UnsatisfiedLinkError unsatisfiedLinkError
-	
-	private static RuntimeException runtimeException
-	
-	private static boolean isTxmInitialized = false
-	
-	private static String txmFilePath
-	
-	public static HandwritingCLib32 getCLib32Instance() throws UnsatisfiedLinkError, RuntimeException {
-		if (unsatisfiedLinkError) {
-			throw unsatisfiedLinkError
-		}
-		if (runtimeException) {
-			throw runtimeException
-		}
-        if (!instance) {
-			try {
-				instance = (HandwritingCLib32) Native.loadLibrary("recglib_x86", HandwritingCLib32.class)
-			} catch (UnsatisfiedLinkError e) {
-				unsatisfiedLinkError = new UnsatisfiedLinkError("Cannot initialize recglib_x86.dll, please make sure it's placed under \${CATALINA_HOME}/webapps/handwriting/WEB-INF/classes/.")
-				throw unsatisfiedLinkError
-			}
+    
+    private static UnsatisfiedLinkError unsatisfiedLinkError
+    
+    private static RuntimeException runtimeException
+    
+    private static boolean isTxmInitialized = false
+    
+    private static String txmFilePath
+    
+    public static HandwritingCLib32 getCLib32Instance() throws UnsatisfiedLinkError, RuntimeException {
+        if (unsatisfiedLinkError) {
+            throw unsatisfiedLinkError
         }
-		if (!isTxmInitialized) {
-			isTxmInitialized = true
-			if (!txmFilePath) {
-				if (System.getenv("CATALINA_HOME")) {
-					txmFilePath = System.getenv("CATALINA_HOME") + "/webapps/handwriting/WEB-INF/txm/hzi501.txm"
-				} else if (System.getProperty("catalina.home")) {
-					txmFilePath = System.getProperty("catalina.home") + "/webapps/handwriting/WEB-INF/txm/hzi501.txm"
-				} else {
-					runtimeException = new RuntimeException("Cannot find CATALINA_HOME in system environments or catalina.home in properties, please make sure it's set properly.")
-					throw runtimeException;
-				}
-			}
-			boolean isSuccess = instance.XW_CreateLib(txmFilePath)
-			if (!isSuccess) {
-				runtimeException = new RuntimeException("Cannot initialize model library file hzi501.txm, please make sure it's placed under \${CATALINA_HOME}/webapps/handwriting/WEB-INF/txm/.")
-				throw runtimeException;
-			}
-		}
-		return instance
-	}
+        if (runtimeException) {
+            throw runtimeException
+        }
+        if (!instance) {
+            try {
+                instance = (HandwritingCLib32) Native.loadLibrary("recglib_x86", HandwritingCLib32.class)
+            } catch (UnsatisfiedLinkError e) {
+                unsatisfiedLinkError = new UnsatisfiedLinkError("Cannot initialize recglib_x86.dll, please make sure it's placed under \${CATALINA_HOME}/webapps/handwriting/WEB-INF/classes/.")
+                throw unsatisfiedLinkError
+            }
+        }
+        if (!isTxmInitialized) {
+            isTxmInitialized = true
+            if (!txmFilePath) {
+                if (System.getenv("CATALINA_HOME")) {
+                    txmFilePath = System.getenv("CATALINA_HOME") + "/webapps/handwriting/WEB-INF/txm/hzi501.txm"
+                } else if (System.getProperty("catalina.home")) {
+                    txmFilePath = System.getProperty("catalina.home") + "/webapps/handwriting/WEB-INF/txm/hzi501.txm"
+                } else {
+                    runtimeException = new RuntimeException("Cannot find CATALINA_HOME in system environments or catalina.home in properties, please make sure it's set properly.")
+                    throw runtimeException;
+                }
+            }
+            boolean isSuccess = instance.XW_CreateLib(txmFilePath)
+            if (!isSuccess) {
+                runtimeException = new RuntimeException("Cannot initialize model library file hzi501.txm, please make sure it's placed under \${CATALINA_HOME}/webapps/handwriting/WEB-INF/txm/.")
+                throw runtimeException;
+            }
+        }
+        return instance
+    }
 }
