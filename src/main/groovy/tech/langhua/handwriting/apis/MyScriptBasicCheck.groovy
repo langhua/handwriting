@@ -97,7 +97,7 @@ public class MyScriptBasicCheck extends BasicCheck {
 		}
 		
 		try {
-			strokeEvaluation(response, hanzi, xptsString, yptsString, cptsString, count, startTime, gson)
+			HttpUtils.strokeEvaluation(response, hanzi, xptsString, yptsString, cptsString, count, startTime, gson)
 		} catch (RuntimeException e) {
 			println("返回JSON结果：" + e.getMessage())
 			HttpUtils.writeJSONtoResponse(e.getMessage(), response)
