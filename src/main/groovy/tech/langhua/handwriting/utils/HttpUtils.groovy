@@ -18,6 +18,7 @@ package tech.langhua.handwriting.utils
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.sun.jna.Memory
+import com.sun.jna.NativeLong
 import com.sun.jna.Pointer
 import javax.servlet.ServletOutputStream
 import javax.servlet.http.HttpServletResponse
@@ -117,13 +118,13 @@ public class HttpUtils {
                 ypts.setInt(Integer.BYTES * i, ((Double) yptsList.get(i)).intValue())
                 cpts.setInt(Integer.BYTES * i,  ((Double) cptsList.get(i)).intValue())
             }
-            println("你要写的汉字是【" + hanzi + "】")
+            println("要写的汉字是【" + hanzi + "】")
 
             int result = instance.XW_RecgB(hanzi.codePointAt(0),
-                    count,
-                    xpts,
-                    ypts,
-                    cpts)
+                                           count,
+                                           xpts,
+                                           ypts,
+                                           cpts)
             int[] results = new int[4]
             results[3] = (int) ((result >> 24) & 0xFF)
             results[2] = (int) ((result >> 16) & 0xFF)
@@ -138,21 +139,22 @@ public class HttpUtils {
                     if (results[0] > 170) {
                         messages << [message: "书写正确"]
                     } else {
-                        messages << [message: "书写不够正确和美观"]
+                        messages << [message: "书写不够正确和美观"] << [stdStrokes: callStdWriting(hanzi, count, instance)]
                     }
                     break;
                 case 1:
                     messages = [result: "error", message: ("笔画数不一致，标准笔画数是" + results[2] + ", 你的笔画数是" + results[3]), score: results[0],
-                        stdStrokeNum: results[2], yourStrokeNum: results[3], han: hanzi]
+                        stdStrokeNum: results[2], yourStrokeNum: results[3], han: hanzi] << [stdStrokes: callStdWriting(hanzi, count, instance)]
                     break;
                 case 2:
-                    messages = [result: "error", message: ("你第" + results[3] + "笔笔顺错了"), score: results[0],
-                        wrongStrokeAt: results[3], han: hanzi]
+                    messages = [result: "error", message: ("第" + results[3] + "笔笔顺错了"), score: results[0],
+                        wrongStrokeAt: results[3], han: hanzi] << [stdStrokes: callStdWriting(hanzi, count, instance)]
                     break;
                 case 3:
-                    messages = [result: "error", message: ("你第" + (results[2] + 1) + "笔笔画方向反了"), score: results[0],
-                        wrongStrokeDirectionAt: (results[2] + 1), han: hanzi]
+                    messages = [result: "error", message: ("第" + (results[2] + 1) + "笔笔画方向反了"), score: results[0],
+                        wrongStrokeDirectionAt: (results[2] + 1), han: hanzi] << [stdStrokes: callStdWriting(hanzi, count, instance)]
             }
+            
             long endTime = System.currentTimeMillis()
             messages << [ timeConsumed : ((endTime - startTime) + "ms") ]
             String jsonStr = gson.toJson(messages)
@@ -163,5 +165,41 @@ public class HttpUtils {
             String jsonStr = gson.toJson(messages)
             throw new RuntimeException(jsonStr)
         }
+    }
+    
+    private static List callStdWriting(String hanzi, int count, HandwritingCLib32 instance) {
+        NativeLong nMaxPointCount = new NativeLong(count)
+        short[] lpXis = new short[nMaxPointCount]
+        short[] lpYis = new short[nMaxPointCount]
+        short[] lpCis = new short[nMaxPointCount]
+        NativeLong stdResult = instance.XW_GetStdTuxg(new NativeLong(hanzi.codePointAt(0)), lpXis, lpYis, lpCis, nMaxPointCount)
+        List result = []
+        if (stdResult && stdResult.intValue() > 0) {
+            List xpts = []
+            List ypts = []
+            println("lpXis: " + lpXis)
+            println("lpYis: " + lpYis)
+            println("lpCis: " + lpCis)
+            long pointerId = System.currentTimeMillis()
+            Map stroke = [pointerType: 'PEN', pointerId: pointerId]
+            short lastC = 0
+            for (int i = 0; i < stdResult.intValue(); i++) {
+                short currentC  = lpCis[i]
+                if (currentC == 3) {
+                    xpts << lpXis[i]
+                    ypts << lpYis[i]
+                    result << [x: xpts, y: ypts]
+
+                    xpts = []
+                    ypts = []
+                } else {
+                    xpts << lpXis[i]
+                    ypts << lpYis[i]
+                }
+                lastC = currentC
+            }
+            result << [x: xpts, y:ypts]
+        }
+        return result
     }
 }

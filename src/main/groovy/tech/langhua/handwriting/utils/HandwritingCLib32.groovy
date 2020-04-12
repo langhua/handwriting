@@ -16,6 +16,7 @@
 package tech.langhua.handwriting.utils
 
 import com.sun.jna.Library
+import com.sun.jna.NativeLong
 import com.sun.jna.Pointer
 
 public interface HandwritingCLib32 extends Library {
@@ -64,8 +65,17 @@ public interface HandwritingCLib32 extends Library {
      *                X的第四个字节: ((X>>24)&0xFF):第二个笔画序号。
      */
     public int XW_RecgB(int ch_unicode,
-                 int nPointCount,
-                 Pointer lpXis,
-                 Pointer lpYis,
-                 Pointer lpCis)
+                        int nPointCount,
+                        Pointer lpXis,
+                        Pointer lpYis,
+                        Pointer lpCis)
+    
+    /**
+     * 返回标准模版的点的个数
+     */
+    public NativeLong XW_GetStdTuxg(NativeLong unicode_i,
+                                    short[] lpXis,
+                                    short[] lpYis,
+                                    short[] lpCis,
+                                    NativeLong nMaxPointCount)
 }
