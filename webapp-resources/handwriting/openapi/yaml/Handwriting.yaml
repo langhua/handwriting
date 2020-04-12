@@ -163,6 +163,8 @@ components:
           description: 用时
           type: string
           example: "100ms"
+        stdStrokes:
+          $ref: '#/components/schemas/StdStrokes'
       required:
         - result
         - score
@@ -206,6 +208,8 @@ components:
           type: number
           format: int
           example: 1
+        stdStrokes:
+          $ref: '#/components/schemas/StdStrokes'
       required:
         - result
         - han
@@ -245,6 +249,8 @@ components:
           type: number
           format: int
           example: 1
+        stdStrokes:
+          $ref: '#/components/schemas/StdStrokes'
       required:
         - result
         - han
@@ -283,6 +289,8 @@ components:
           type: number
           format: int
           example: 2
+        stdStrokes:
+          $ref: '#/components/schemas/StdStrokes'
       required:
         - result
         - han
@@ -305,3 +313,24 @@ components:
       required:
         - han
         - strokes
+
+    StdStrokes:
+      description: 汉字标准笔画
+      type: array
+      items:
+        description: 笔画的坐标组
+        type: object
+        properties:
+          x:
+            description: 一个笔画的x坐标组
+            type: array
+            items:
+              type: number
+              format: int
+          y:
+            description: 一个笔画的y坐标组
+            type: array
+            items:
+              type: number
+              format: int
+      example: [{"x":[121,113,95,70,13],"y":[19,109,165,201,242]},{"x":[128,145,166,233],"y":[46,124,171,237]}]

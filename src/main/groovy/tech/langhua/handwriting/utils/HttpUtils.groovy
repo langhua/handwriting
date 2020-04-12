@@ -198,7 +198,9 @@ public class HttpUtils {
                 }
                 lastC = currentC
             }
-            result << [x: xpts, y:ypts]
+            if (xpts) {
+                result << [x: xpts, y:ypts]
+            }
         }
         return result
     }
