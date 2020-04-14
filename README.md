@@ -21,7 +21,7 @@
 
 
 #### 技术说明
-系统开发和测试，是在Windows、JDK 8、Tomcat 8.5.x下进行。笔迹输入和汉字识别，使用了[MyScript](https://github.com/MyScript)，接口文档(OpenAPI)使用了[Swagger-UI](https://github.com/swagger-api/swagger-ui)。
+系统开发和测试，是在Windows、JDK 8(32位)、Tomcat 8.5.x下进行。笔迹输入和汉字识别，使用了[MyScript](https://github.com/MyScript)，接口文档(OpenAPI)使用了[Swagger-UI](https://github.com/swagger-api/swagger-ui)。
 
 
 #### 开发笔记

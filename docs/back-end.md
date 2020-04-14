@@ -1,6 +1,8 @@
 ## 后台开发笔记
 汉字手写检查的后台，使用Tomcat作为Web服务器，Groovy作为实现Web服务的开发语言，通过JNA库调用Win32 DLL里的汉字手写检查算法库。
 
+这里要注意，由于DLL库是32位的，所以JDK也必须是32位的。
+
 #### C接口
 根据[DLL库C语言头文件](https://github.com/langhua/handwriting/blob/master/src/main/resources/xw_api.h)，通过JNA调用以下4个接口：
 1. XW_CreateLib
