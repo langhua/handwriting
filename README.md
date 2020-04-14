@@ -1,6 +1,6 @@
 ### 朗华中文手写检查
 
-![演示使用] (docs/images/langhua-handwriting-demo.gif)
+![演示使用](docs/images/langhua-handwriting-demo.gif)
 
 中文手写检查包括：
 1. 为一个汉字的书写漂亮程度评分
@@ -24,5 +24,5 @@
 
 
 #### 开发笔记
-[1. 前端开发](docs/front-end.md)
-[2. 后端开发](docs/back-end.md)
+1. [前端开发](./docs/front-end.md)
+2. [后端开发](/docs/back-end.md)
